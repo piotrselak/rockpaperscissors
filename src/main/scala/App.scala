@@ -5,7 +5,7 @@ import zio._
 
 import java.io.IOException
 
-import gamelogic.Logic
+import gamelogic.Logic._
 
 
 object MyApp extends ZIOAppDefault {
@@ -15,7 +15,10 @@ object MyApp extends ZIOAppDefault {
 
   val myAppLogic : IO[IOException, Unit] =
     for {
-      _ <- printLine("Hello! Rock - r, paper - p, scissors - s. What's your choice?")
-      input <- getUserInput      
+      _ <- printLine("Hello, seed?")
+      seed <- readLine
+      _ <- printLine("Rock - r, paper - p, scissors - s. What's your choice?")
+      input <- getUserInput
+            
     } yield ()
 }
