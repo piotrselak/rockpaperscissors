@@ -1,11 +1,22 @@
 package gamelogic
 
 
-sealed trait Result
+sealed trait Result {
+  val name: String
+}
 
-final case object Win extends Result
-final case object Draw extends Result
-final case object Lose extends Result
+final case object Win extends Result {
+  override val name = "Win"
+}
+
+final case object Draw extends Result {
+  override val name = "Draw"
+}
+
+final case object Lose extends Result {
+  override val name = "Lose"
+}
+
 
 /*
  * Probably the greatest choice of word in the whole universe
@@ -37,14 +48,14 @@ sealed private case class RNG(seed: Long) {
 }
 
 object Logic {
-  private def parseUserChoice(input: String): Either[WrongInput, Weapon] = input.toLowerCase match {
-    case "r" => Right(Rock)
-    case "p" => Right(Paper)
-    case "s" => Right(Scissors)
-    case _ => Left(WrongInput())
+  def parseUserChoice(input: String): Option[Weapon] = input.toLowerCase match {
+    case "r" => Some(Rock)
+    case "p" => Some(Paper)
+    case "s" => Some(Scissors)
+    case _ => None
   }
 
-  private def computerChoice(seed: Long): Weapon = {
+  def computerChoice(seed: Long): Weapon = {
     val randomValue = RNG(seed).getRand(3)._1
     randomValue match {
       case 0 => Rock
@@ -53,9 +64,10 @@ object Logic {
     }
   }
 
-  def evaluateGame(playerChoice: Weapon, computerChoice: Weapon): Result = (playerChoice.weight, computerChoice.weight) match {
-    case (playerOption, computerOption) if (playerOption == computerOption + 1) => Win
-    case (playerOption, computerOption) if (playerOption == computerOption) => Lose
+  def evaluateGame(playerChoice: Option[Weapon], computerChoice: Weapon): Result = (playerChoice, computerChoice) match {
+    case (wrong, x) if (wrong == None) => throw WrongInput() 
+    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight + 1) => Win
+    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight) => Lose
     case _ => Draw
   }
 }

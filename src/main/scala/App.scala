@@ -5,20 +5,26 @@ import zio._
 
 import java.io.IOException
 
-import gamelogic.Logic._
+import gamelogic._
 
 
 object MyApp extends ZIOAppDefault {
-  def run = myAppLogic
+  override def run = myAppLogic
 
   def getUserInput: IO[IOException, String] = Console.readLine
+
+  def getResult(input: String, seed: Long): String = 
+    Logic.evaluateGame(
+      Logic.parseUserChoice(input),
+      Logic.computerChoice(seed)
+    ).name
 
   val myAppLogic : IO[IOException, Unit] =
     for {
       _ <- printLine("Hello, seed?")
-      seed <- readLine
+      seed <- getUserInput
       _ <- printLine("Rock - r, paper - p, scissors - s. What's your choice?")
       input <- getUserInput
-            
+      _ <- printLine(getResult(input, seed.toLong))
     } yield ()
 }
