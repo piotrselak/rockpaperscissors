@@ -23,7 +23,7 @@ final case object Paper extends Weapon {
 }
 
 final case object Scissors extends Weapon {
-  override val weight = 1  
+  override val weight = 3 
 }
 
 final case class WrongInput(name: String = "Invalid input.") extends Exception
@@ -53,13 +53,9 @@ object Logic {
     }
   }
 
-  def evaluateGame(playerChoice: Weapon, computerChoice: Weapon): Result = (playerChoice, computerChoice) match {
-    case (Rock, Paper) => Lose
-    case (Rock, Scissors) => Win
-    case (Paper, Scissors) => Lose
-    case (Paper, Rock) => Win
-    case (Scissors, Rock) => Lose
-    case (Scissors, Paper) => Win
+  def evaluateGame(playerChoice: Weapon, computerChoice: Weapon): Result = (playerChoice.weight, computerChoice.weight) match {
+    case (playerOption, computerOption) if (playerOption == computerOption + 1) => Win
+    case (playerOption, computerOption) if (playerOption == computerOption) => Lose
     case _ => Draw
   }
 }
