@@ -10,18 +10,28 @@ final case object Lose extends Result
 /*
  * Probably the greatest choice of word in the whole universe
 */
-sealed trait Weapon
+sealed trait Weapon {
+  val weight: Int
+}
 
-final case object Rock extends Weapon
-final case object Paper extends Weapon
-final case object Scissors extends Weapon
+final case object Rock extends Weapon {
+  override val weight = 1  
+}
+
+final case object Paper extends Weapon {
+  override val weight = 2
+}
+
+final case object Scissors extends Weapon {
+  override val weight = 1  
+}
 
 final case class WrongInput(name: String = "Invalid input.") extends Exception
 
 sealed private case class RNG(seed: Long) {
   def getRand(max: Int = 1): (Long, RNG) = {
     val newSeed = ((seed * 17) & 321)
-    val randomValue = newSeed % max 
+    val randomValue = (newSeed >> 3) % max 
     (randomValue, RNG(newSeed))
   }
 }
