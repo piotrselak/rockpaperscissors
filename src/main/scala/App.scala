@@ -13,11 +13,17 @@ object MyApp extends ZIOAppDefault {
 
   def getUserInput: IO[IOException, String] = Console.readLine
 
-  def getResult(input: String, seed: Long): String = 
-    Logic.evaluateGame(
+  def getResult(input: String, seed: Long): String = {
+    val result = Logic.evaluateGame(
       Logic.parseUserChoice(input),
       Logic.computerChoice(seed)
-    ).name
+    )
+
+    result match {
+      case Right(x) => x.name
+      case Left(error) => error.get
+    }
+  }
 
   val myAppLogic : IO[IOException, Unit] =
     for {

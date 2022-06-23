@@ -37,7 +37,9 @@ final case object Scissors extends Weapon {
   override val weight = 3 
 }
 
-final case class WrongInput(name: String = "Invalid input.") extends Exception
+final case class WrongInput() {
+  def get: String = "Wrong input"
+}
 
 sealed private case class RNG(seed: Long) {
   def getRand(max: Int = 1): (Long, RNG) = {
@@ -64,10 +66,10 @@ object Logic {
     }
   }
 
-  def evaluateGame(playerChoice: Option[Weapon], computerChoice: Weapon): Result = (playerChoice, computerChoice) match {
-    case (wrong, x) if (wrong == None) => throw WrongInput() 
-    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight + 1) => Win
-    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight) => Lose
-    case _ => Draw
+  def evaluateGame(playerChoice: Option[Weapon], computerChoice: Weapon): Either[WrongInput, Result] = (playerChoice, computerChoice) match {
+    case (wrong, x) if (wrong == None) => Left(WrongInput())
+    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight + 1) => Right(Win)
+    case (Some(playerOption), computerOption) if (playerOption.weight == computerOption.weight) => Right(Lose)
+    case _ => Right(Draw)
   }
 }
